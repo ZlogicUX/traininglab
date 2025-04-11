@@ -39,6 +39,8 @@
         background: white;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        text-align: left;
+        white-space: pre-wrap;
       }
     </style>
   </head>
@@ -55,3 +57,23 @@
     </div>
 
     <script>
+      async function generatePlan() {
+        const input = document.getElementById('userInput').value;
+        document.getElementById('response').innerHTML = '<em>Generating, please wait...</em>';
+
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userInput: input })
+        });
+
+        const data = await res.json();
+        if (data.output) {
+          document.getElementById('response').innerText = data.output;
+        } else {
+          document.getElementById('response').innerText = 'Error: ' + (data.error || 'Unknown error');
+        }
+      }
+    </script>
+  </body>
+</html>
