@@ -39,13 +39,18 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!data.choices || data.choices.length === 0) {
-      // Send back the raw GPT response for debugging
-      return res.status(500).json({ error: "No output returned from GPT.", raw: data });
+    console.log("🔍 GPT RAW RESPONSE:", JSON.stringify(data, null, 2));
+
+    if (!data || !data.choices || !data.choices[0] || !data.choices[0].message) {
+      return res.status(500).json({
+        error: "No output returned from GPT.",
+        debug: data
+      });
     }
 
     res.status(200).json({ output: data.choices[0].message.content });
   } catch (err) {
+    console.error("🔥 GPT FETCH ERROR:", err);
     res.status(500).json({ error: "Failed to fetch from OpenAI API.", detail: err.message });
   }
 }
