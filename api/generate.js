@@ -1,8 +1,18 @@
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+};
+
 export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   const { userInput } = req.body;
 
   if (!userInput) {
-    return res.status(400).json({ error: "Missing user input." });
+    return res.status(400).json({ error: 'Missing user input.' });
   }
 
   try {
@@ -28,6 +38,7 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
     if (data.choices && data.choices.length > 0) {
       res.status(200).json({ output: data.choices[0].message.content });
     } else {
